@@ -132,11 +132,3 @@ RQObjectiveFunction <- function(beta,out,model,data,obs,pval,emp_qnt,varPredict 
   else if (out == 2) return(cbind(VaR, Hit))
   
 }
-
-
-# ss<-Sys.time()
-# a<-ComputeVaR(runif(3),data[[1]],quantile(data[[1]],0.01),rep(0,obs),obs)
-# Sys.time() - ss
-# RQObjectiveFunction
-# 
-# b<-RQObjectiveFunction(runif(3),1,1,data[[1]],obs, 0.01, quantile(data[[1]],0.01))
