@@ -14,8 +14,9 @@ NumericVector caviar_ADAPTIVE(double K, double THETA, NumericVector BETA, Numeri
   {
     // Adaptive
     VaR[i] = VaR[i-1] + BETA[0] * (1/(1 + exp(K*(y[i-1]+ VaR[i-1]))) - THETA);		
-    //VaR[i] = VaR[i-1] + BETA[0] * ((y[i-1]<-VaR[i-1]) - THETA);
+    
   }
+  
   if (varPredict == 1){
     VaR[RowsOfy] = VaR[RowsOfy-1] + BETA[0] * (1/(1 + exp(K*(y[RowsOfy-1]+ VaR[RowsOfy-1]))) - THETA);		
   } 

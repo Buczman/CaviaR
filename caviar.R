@@ -41,19 +41,19 @@ caviarOptim <- function(data,
                         MAXITER = 500, 
                         predict = F){
 
-  # This function was created on the basis of Robert F. Engle & Simone Manganelli, 
-  # 2004. "CAViaR: Conditional Autoregressive Value at Risk by Regression Quantiles," 
-  # Journal of Business & Economic Statistics, American Statistical Association, 
+  # This function was created on the basis of Robert F. Engle & Simone Manganelli,
+  # 2004. "CAViaR: Conditional Autoregressive Value at Risk by Regression Quantiles,"
+  # Journal of Business & Economic Statistics, American Statistical Association,
   # vol. 22, pages 367-381, October.
-  
-  # Its aim is to calculate CAViaR values, based on provided data, selected model and 
+  # 
+  # Its aim is to calculate CAViaR values, based on provided data, selected model and
   # value at risk probability level. To know more about CAViaR please refer to the cited
-  # article or an article of my own: Buczynski M., Chlebus M., "Is CAViaR model really 
-  # so good in Value at Risk forecasting? Evidence from evaluation of a quality 
-  # of Value-at-Risk forecasts obtained based on the: GARCH(1,1), GARCH-t(1,1), 
-  # GARCH-st(1,1), QML-GARCH(1,1), CAViaR and the historical simulation models 
-  # depending on the stability of financial markets" Working Papers 2017-29, 
-  # Faculty of Economic Sciences, University of Warsaw. 
+  # article or an article of my own: Buczynski M., Chlebus M., "Is CAViaR model really
+  # so good in Value at Risk forecasting? Evidence from evaluation of a quality
+  # of Value-at-Risk forecasts obtained based on the: GARCH(1,1), GARCH-t(1,1),
+  # GARCH-st(1,1), QML-GARCH(1,1), CAViaR and the historical simulation models
+  # depending on the stability of financial markets" Working Papers 2017-29,
+  # Faculty of Economic Sciences, University of Warsaw.
   # 
   # 
   # Input:
