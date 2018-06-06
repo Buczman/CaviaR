@@ -30,13 +30,13 @@
 
   #### Models
   ##### SAV:
-  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/SAV.gif)
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/SAV.png)
   ##### AS:
-  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/AS.gif)
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/AS.png)
   ##### Indirect GARCH(1,1):
-  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/GARCH.gif)
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/GARCH.png)
   ##### Adaptive:
-  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/adaptive.gif)
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/adaptive.png)
   
 
   ### **Output**:
