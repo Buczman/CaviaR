@@ -132,6 +132,7 @@ caviarOptim <- function(data,
   met_hes <- 'BFGS'
   con <- list(maxit = MAXITER)
 
+  # @TODO change optimization procedure to the best automatically
   if (model == 4) {
     met <- "Brent"
     low <- -10
