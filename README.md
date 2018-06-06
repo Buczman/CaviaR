@@ -35,3 +35,11 @@
     - VaR          - numeric         - calculated Value at Risk
     - bestRQ       - numeric         - best cost function among all
     - VarPredict   - numeric         - predicted value at risk for the next period (tail(VaR,1))
+
+
+  ## Test case
+  
+  This repo also contains test case, so feel free to use it.
+  
+  Here is also an example of prediction accuracy on randomly chosen polish WIG index data (detailed indices in test_case.csv and      test_case.R) 
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/test_case_plot.png)
