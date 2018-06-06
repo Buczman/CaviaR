@@ -16,6 +16,7 @@ NumericVector caviar_GARCH(NumericVector BETA, NumericVector y, double empirical
     VaR[i] =  sqrt(BETA[0] + BETA[1] * pow(VaR[i-1],2) + BETA[2] * pow(y[i-1],2));
     
   }
+  
   if (varPredict == 1){
     VaR[RowsOfy] = sqrt(BETA[0] + BETA[1] * pow(VaR[RowsOfy-1],2) + BETA[2] * pow(y[RowsOfy-1],2));
   } 
