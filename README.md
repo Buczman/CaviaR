@@ -29,7 +29,7 @@
   - k            - numeric         - optional parameter for ADAPTIVE model
 
   #### Models
-f_t(\beta_1) = f_{t-1}(\beta_1) + \beta_1 \left \{\left [1 + exp(G\left [ y_{t-1} - f_{t-1}(\beta_1) \right ]) \right ]^{-1} - \theta  \right \}
+{f_t(\beta_1) = f_{t-1}(\beta_1) + \beta_1 \left \{\left [1 + exp(G\left [ y_{t-1} - f_{t-1}(\beta_1) \right ]) \right ]^{-1} - \theta  \right \}}
 
   ### **Output**:
   - outL        - list:
