@@ -28,6 +28,17 @@
   - predict      - logical         - whether to return only predicted value for next period or whole list
   - k            - numeric         - optional parameter for ADAPTIVE model
 
+  #### Models
+  ##### SAV:
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/SAV.gif)
+  ##### AS:
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/AS.gif)
+  ##### Indirect GARCH(1,1):
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/GARCH.gif)
+  ##### Adaptive:
+  ![CAVIAR MODEL](https://raw.githubusercontent.com/Buczman/RCaviar/master/adaptive.gif)
+  
+
   ### **Output**:
   - outL        - list:
     - bestVals     - numeric         - best cost function values
