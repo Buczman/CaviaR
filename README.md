@@ -1,4 +1,4 @@
-#### RCaviar
+# RCaviar
 
 ## R code for estimation of CAViaR models.
 
@@ -17,7 +17,7 @@
   Faculty of Economic Sciences, University of Warsaw.
 
 
-  # **Input**:
+  ### **Input**:
 
   - data         - numeric         - data for the CAViaR model to calculate risk
                    (convertible to numerical)
@@ -28,7 +28,7 @@
   - predict      - logical         - whether to return only predicted value for next period or whole list
   - k            - numeric         - optional parameter for ADAPTIVE model
 
-  # **Output**:
+  ### **Output**:
   - outL        - list:
     - bestVals     - numeric         - best cost function values
     - bestPar      - numeric         - best parameters
