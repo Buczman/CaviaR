@@ -1,14 +1,14 @@
 require(Rcpp)
+require(magrittr)
+current.dir = LocationOfThisScript()
 
 caviarOptimisation <- function(data, 
                                model = 1, 
                                pval = 0.01, 
                                REP = 5, 
                                MAXITER = 500, 
-                               predict = 0){
-  # script.dir <- dirname(parent.frame(2)$ofile)
-  print(parent.frame(2)$ofile)
-  
+                               predict = T){
+
   
   if (length(data) < 1) {
     stop("data should be series of at least 300 length")
@@ -19,13 +19,12 @@ caviarOptimisation <- function(data,
   
   tryCatch(data <- as.numeric(data), 
            error = function(e){
-            print("Can't convert to numeric! Provide data convertible to numerical!")
-            stop()
+             print("Can't convert to numeric! Provide data convertible to numerical!")
+             stop()
   })
   
   models <- c('SAV','AS','GARCH','ADAPTIVE')
-  con <- list(maxit = MAXITER)
-  
+
   if (!model %in% c(1,2,3,4)) {
     stop('Wrong MODEL selected')
   } else if (model == 1 || model == 3) {
@@ -39,7 +38,7 @@ caviarOptimisation <- function(data,
     nInitialCond = 5
   }
 
-  sourceCpp(paste0(models[model],'.cpp'))
+  sourceCpp(paste0(current.dir, "/", models[model], '.cpp'))
   obs <- length(data)
 
   VaR <- rep(0, obs)
@@ -51,11 +50,11 @@ caviarOptimisation <- function(data,
     quantile(data[1:300], pval)
   }
 
-  print('STARTING VALUES SIMULATION')  
+  cat('STARTING VALUES SIMULATION')  
   RQfval <- apply(initialTargetVectors, 1, RQObjectiveFunction, 1, model, data, obs, pval, emp_qnt)
   
   BestInitialCond <- if (model == 4) {
-    matrix(initialTargetVectors[order(RQfval), ][1:nInitialCond],ncol=1)
+    matrix(initialTargetVectors[order(RQfval), ][1:nInitialCond], ncol=1)
   } else {
     initialTargetVectors[order(RQfval), ][1:nInitialCond, ]
   }
@@ -66,34 +65,68 @@ caviarOptimisation <- function(data,
   low <- -Inf
   up <- Inf
   met_hes <- 'BFGS'
-  
-  if(model == 4){
+  con <- list(maxit = MAXITER)
+
+  if (model == 4) {
     met <- "Brent"
     low <- -10
     up <- 10
-  }else if(model == 3){
+  }
+  if (model == 3) {
     met_hes <- 'SANN'
   }
-  print('STARTING OPTIMIZATION PROCEDURE')  
-  for (i in 1:nrow(BestInitialCond)){
-    opt <- optim(BestInitialCond[i,], RQObjectiveFunction, 
-                 out=1, model=model, data=data, obs=obs, pval=pval, emp_qnt=emp_qnt, 
-                 method=met, lower=low, upper=up, control = con)
-    RQoptim[i, 1] <- opt$value
-    RQoptim[i, 2:(ncol(initialTargetVectors)+1)] <- opt$par
+  
+  cat('STARTING OPTIMIZATION PROCEDURE')  
+  for (i in 1:nrow(BestInitialCond)) {
+    # initial optimization procedure
+    vOptim <- optim(BestInitialCond[i,], 
+                    RQObjectiveFunction, 
+                    out = 1, 
+                    model = model, 
+                    data = data, 
+                    obs = obs, 
+                    pval = pval, 
+                    emp_qnt = emp_qnt, 
+                    method = met, 
+                    lower = low, 
+                    upper = up, 
+                    control = con)
+      
+    RQoptim[i, 1] <- vOptim$value
+    RQoptim[i, 2:(ncol(initialTargetVectors)+1)] <- vOptim$par
     
+    # repeating optim on hessian optimiziation to get more accurate results
     for(j in 1:REP){
-      opt <- optim(RQoptim[i, 2:(ncol(initialTargetVectors)+1)],
-                   RQObjectiveFunction, out=1, model=model, data=data, obs=obs, pval=pval, emp_qnt=emp_qnt,
-                   method=met_hes, control = con)
-      opt <- optim(opt$par, RQObjectiveFunction,
-                   out=1, model=model, data=data, obs=obs, pval=pval, emp_qnt=emp_qnt,
-                   method=met, lower=low, upper=up, control = con)
-
-      if(abs(RQoptim[i, 1] - opt$value)>10000000000){ #Convergence test
-        RQoptim[i, 1] <- opt$value
-        RQoptim[i, (ncol(initialTargetVectors)+1)] <- opt$par      
-      }else{
+      # once optimizing previous best param (using BFGS)
+      vOptim <- optim(RQoptim[i, 2:(ncol(initialTargetVectors)+1)],
+                      RQObjectiveFunction, 
+                      out = 1,
+                      model = model,
+                      data = data,
+                      obs = obs,
+                      pval = pval,
+                      emp_qnt = emp_qnt,
+                      method = met_hes,
+                      control = con)
+      # secondly optimizing previous best param with afore method
+      vOptim <- optim(vOptim$par,
+                      RQObjectiveFunction,
+                      out = 1,
+                      model = model,
+                      data = data,
+                      obs = obs,
+                      pval = pval,
+                      emp_qnt = emp_qnt,
+                      method = met,
+                      lower = low,
+                      upper = up,
+                      control = con)
+      
+      #checking whether hessian optimization converged
+      if(abs(RQoptim[i, 1] - opt$value)>10000000000){ 
+        RQoptim[i, 1] <- vOptim$value
+        RQoptim[i, (ncol(initialTargetVectors)+1)] <- vOptim$par      
+      } else {
         RQoptim[i,ncol(RQoptim)] <- j
         break
       }
@@ -105,13 +138,15 @@ caviarOptimisation <- function(data,
   VarPredict <- VaR %>% tail(1)
   VaR <- VaR[-length(VaR)]
 
-  if (predict) return(VarPredict)
+  if (predict) 
+    return(VarPredict)
   else {
-    outL <- list(	bestVals =   RQoptim,
-                  bestPar =    bestPar,
-                  VaR =        VaR,
-                  bestRQ =     RQoptim[order(RQoptim[,1]), ][1, 1],
-                  VarPredict = VarPredict)
+    outL <- list(	bestVals   = RQoptim,
+                  bestPar    = bestPar,
+                  VaR        = VaR,
+                  bestRQ     = RQoptim[order(RQoptim[,1]), ][1, 1],
+                  VarPredict = VarPredict
+                  )
     return(outL)
   }
   
@@ -125,7 +160,8 @@ RQObjectiveFunction <- function(beta,
                                 pval,
                                 emp_qnt,
                                 k = 5,
-                                varPredict = 0){
+                                varPredict = F){
+  
   if (varPredict) {
     VaR = rep(0,obs+1)
   } else {
@@ -135,8 +171,6 @@ RQObjectiveFunction <- function(beta,
   
   VaR[1] <- -1*emp_qnt
 
-  
-  
   if (model == 1) {
 
     VaR <- caviar_SAV(beta, data, VaR[1], VaR, obs, varPredict)
@@ -169,4 +203,28 @@ RQObjectiveFunction <- function(beta,
     return(cbind(VaR, Hit))
   }
   
+}
+
+LocationOfThisScript = function() # Function LocationOfThisScript returns the location of this .R script (may be needed to source other files in same dir)
+{
+  this.file = NULL
+  # This file may be 'sourced'
+  for (i in -(1:sys.nframe())) {
+    if (identical(sys.function(i), base::source)) this.file = (normalizePath(sys.frame(i)$ofile))
+  }
+  
+  if (!is.null(this.file)) return(dirname(this.file))
+  
+  # But it may also be called from the command line
+  cmd.args = commandArgs(trailingOnly = FALSE)
+  cmd.args.trailing = commandArgs(trailingOnly = TRUE)
+  cmd.args = cmd.args[seq.int(from=1, length.out=length(cmd.args) - length(cmd.args.trailing))]
+  res = gsub("^(?:--file=(.*)|.*)$", "\\1", cmd.args)
+  
+  # If multiple --file arguments are given, R uses the last one
+  res = tail(res[res != ""], 1)
+  if (0 < length(res)) return(dirname(res))
+  
+  # Both are not the case. Maybe we are in an R GUI?
+  return(NULL)
 }
