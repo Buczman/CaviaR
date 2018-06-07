@@ -1,7 +1,9 @@
 library(data.table)
 source('caviar.R')
+library(microbenchmark)
 data <- fread('test_case.csv')
 data[, logret := log(indeks/shift(indeks, 1, type='lag'))]
+
 caviar <- caviarOptim(data[5000:.N,logret])
 
 caviar$bestVals
@@ -33,6 +35,27 @@ length(data[5000:.N,logret])
 caviar$VarPredict
 # [1] 0.01805231
 
+microbenchmark(caviarOptim(data[5000:.N,logret],1),
+               caviarOptim(data[5000:.N,logret],2),
+               caviarOptim(data[5000:.N,logret],3),
+               caviarOptim(data[5000:.N,logret],4),
+               times = 5
+               )
+# With source cpps loaded
+#             Unit: milliseconds
+#                                              expr       min        lq      mean    median        uq       max neval
+#   SAV       caviarOptim(data[5000:.N, logret], 1)  700.1505  750.6235  779.4809  794.0617  818.6963  833.8726     5
+#   AS        caviarOptim(data[5000:.N, logret], 2) 1037.1660 1042.7767 1069.4377 1050.0679 1107.0141 1110.1639     5
+#   GARCH     caviarOptim(data[5000:.N, logret], 3) 1141.1666 1147.9098 1209.1223 1218.8887 1242.9981 1294.6482     5
+#   ADAPTIVE  caviarOptim(data[5000:.N, logret], 4) 1094.4244 1144.2377 1160.9489 1176.5494 1184.6566 1204.8765     5
+
+# Without source cpps loaded +- 3 s slower per each first calculation
+#             Unit: milliseconds
+#                                              expr       min        lq     mean    median        uq      max neval
+#   SAV       caviarOptim(data[5000:.N, logret], 1)  738.8247  761.1415 1363.354  788.7325  812.1219 3715.948     5
+#   AS        caviarOptim(data[5000:.N, logret], 2) 1025.2370 1081.2675 1756.967 1184.6326 1215.5393 4278.160     5
+#   GARCH     caviarOptim(data[5000:.N, logret], 3) 1182.6648 1200.8437 1909.535 1278.3613 1288.6174 4597.186     5
+#   ADAPTIVE  caviarOptim(data[5000:.N, logret], 4) 1132.9430 1133.2657 1748.118 1143.4592 1147.0464 4183.877     5
 
 #ADVANCED
 library(xts)
