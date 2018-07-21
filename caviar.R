@@ -115,7 +115,6 @@ caviarOptim <- function(data,
     quantile(data[1:300], pval)
   }
 
-  cat('STARTING VALUES SIMULATION\n')  
   RQfval <- apply(initialTargetVectors, 1, RQObjectiveFunction, 1, model, data, obs, pval, emp_qnt, k)
   
   BestInitialCond <- if (model == 4) {
@@ -142,7 +141,6 @@ caviarOptim <- function(data,
     met_hes <- 'SANN'
   }
   
-  cat('STARTING OPTIMIZATION PROCEDURE\n')  
   for (i in 1:nrow(BestInitialCond)) {
     # initial optimization procedure
     vOptim <- optim(BestInitialCond[i,], 
