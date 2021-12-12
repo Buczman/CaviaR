@@ -250,7 +250,7 @@ RQObjectiveFunction <- function(beta,
   } else if (model == 3) {
     caviar_GARCH(beta, data, VaR[1], VaR, obs, varPredict)
   } else if (model == 4) {
-    caviar_ADAPTIVE(pval, k, beta, data, VaR[1], VaR, obs, varPredict)
+    caviar_ADAPTIVE(k, pval, beta, data, VaR[1], VaR, obs, varPredict)
   }
   
   if (!varPredict){
